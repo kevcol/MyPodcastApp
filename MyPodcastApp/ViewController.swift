@@ -10,7 +10,7 @@ import UIKit
 import waterwheel
 import ObjectMapper
 
-// Copied over the frontpageviewcontent struct from demo example - will have to modify to reflect actual content model
+// Copied struct from demo example - will have to modify to reflect actual content model, will just display title for now
 public struct FrontpageViewContent: Mappable {
     var title: String?
     var body:  String?
@@ -33,7 +33,7 @@ public struct FrontpageViewContent: Mappable {
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     // temporary array of titles; will be served by waterwheel once I figure it out
-    let cellContent = ["The Red Hurricane", "The Hard Way", "Death's A Bitch", "The David"]
+    // let cellContent = ["The Red Hurricane", "The Hard Way", "Death's A Bitch", "The David"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +41,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // temporarily using array count; will change to view count when I figure out how to access
-        return cellContent.count
+        return 10
     }
     
     
@@ -49,9 +49,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         
         let cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "Cell")
         
-        // stumped on what to put here; going with array data for now
-        cell.textLabel?.text = cellContent[indexPath.row]
+        // thoroughly confused how to get content into the cell ... but I am making it through to Drupal cuz changing view path gives me a watchdog 404
+        // "frontpaje" path, btw, is path for a REST export I made based on frontpage View, to expose JSON. seems to work fine (is there a better way to expose?)
         
+        print("hit da Drupal")
+        
+        let frontpageTableVC = waterwheelViewTableViewController(viewPath: "frontpaje", configure: { (cell: ExampleCell, responseRow: FrontpageViewContent) in
+            cell.textLabel?.text = responseRow.title
+            cell.detailTextLabel?.text = responseRow.contentType
+        })
+
     
         return cell
         
@@ -64,5 +71,17 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
 
 }
+
+final class ExampleCell: UITableViewCell {
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
 
 
